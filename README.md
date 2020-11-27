@@ -3,7 +3,7 @@ Project to Force Controle with an UR5 under ROS Kinetic.
 
 Since I needed to change some other packges I uploaded the whole Workspace to Github.
 
-To Clone th git. Go into your new ROS Catkin_Worksace and run.
+To Clone the git. Go into your new ROS Catkin_Worksace and run.
 
 `$ git clone https://github.com/jhaardt/wrs.git src`
 
