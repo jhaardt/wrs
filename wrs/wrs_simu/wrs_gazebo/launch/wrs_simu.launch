@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="limited" default="false"  doc="If true, limits joint range [-PI, PI] on all joints." />
+  <arg name="paused" default="true" doc="Starts gazebo in paused mode" />  <!--https://answers.ros.org/question/242151/how-to-set-initial-pose-to-ur5-in-gazebo/?answer=249145#post-id-249145-->
+  <arg name="gui" default="true" doc="Starts gazebo gui" />
+   
+  <!-- startup simulated world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find wrs_gazebo)/worlds/empty.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+    
+  <!-- send robot urdf to param server --> 
+  <param unless="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find wrs_description)/urdf/wrs_robot.xacro'" />
+  <param if="$(arg limited)" name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur_description)/urdf/ur5_joint_limited_robot.urdf.xacro'" />
+  
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -J shoulder_lift_joint -0.5 -unpause" respawn="false" output="screen" />
+  
+  <include file="$(find ur_gazebo)/launch/controller_utils.launch"/>
+ <!-- start this controller -->
+  <rosparam file="$(find wrs_gazebo)/controller/arm_controller_ur5.yaml" command="load"/>
+  <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/> 
+   <!-- load other controllers -->
+  <node name="ros_control_controller_manager" pkg="controller_manager" type="controller_manager" respawn="false" output="screen" args="load joint_group_position_controller"/>
+  
+  <rosparam file="$(find wrs_gazebo)/controller/gripper_controller.yaml" command="load"/>
+  <node name="gripper_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn gripper_controller" respawn="false" output="screen"/>
+    
+  <!--send & spawn environment-->
+  <node name="spawn_gazebo_environment" pkg="gazebo_ros" type="spawn_model" args=" -file '$(find wrs_description)/urdf/wrs_environment.urdf.xacro' -urdf -model wrs_environment" />   
+  
+  <node name="spawn_bearinghousing" pkg="gazebo_ros" type="spawn_model" args="-file $(find wrs_description)/urdf/wrs_bearinghousing.urdf.xacro -urdf -model wrs_bearinghousing -x 0.7 -y 0.1 -z 0.03"/>
+<!--  <node name="spawn_bearinghousing2" pkg="gazebo_ros" type="spawn_model" args="-file $(find wrs_description)/urdf/wrs_bearinghousing.urdf.xacro -urdf -model wrs_bearinghousing2 -x 0.74 -y -0.2 -z 0.1"/>-->
+  
+  <node name="spawn_pin" pkg="gazebo_ros" type="spawn_model" args="-file $(find wrs_description)/urdf/wrs_pin.urdf.xacro -urdf -model wrs_pin -x 0.6 -y 0.1 -z 0.03"/> 
+   
+  <!-- Converts ft_sensor_topic  -->
+  <!-- Since its nesssary that the ft_sensor service is started before the note we wait 3sec https://answers.ros.org/question/233353/set-delay-between-starting-nodes-within-launch-file/-->
+  <arg name="node_start_delay" default="3.0" />   
+  <node name="ft_sensor_topic_converted" pkg="topic_tools" type="transform" args="/wrench /wrench_converted std_msgs/Float64 'math.hypot(math.hypot(m.wrench.force.x,m.wrench.force.y),m.wrench.force.z)' --import math" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+  <node pkg="wrs_run" name="ft_mean_filter" type="ft_mean_filter"/>
+   <node pkg="wrs_run" name="ft_world_transform" type="ft_world_transform_simu"/>
+   
+  <!-- For Setup -->
+  <node name="ft_sensor_topic_ft_z" pkg="topic_tools" type="transform" args="/wrench_world /wrench_ft_z std_msgs/Float64 'm.wrench.force.z' --import math" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+  <node name="ft_sensor_topic_ft_z_mean_5" pkg="topic_tools" type="transform" args="/wrench_mean_5 /wrench_ft_z_mean_5 std_msgs/Float64 'm.wrench.force.z' --import math" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+  <node name="ft_sensor_topic_ft_z_mean_50" pkg="topic_tools" type="transform" args="/wrench_mean_50 /wrench_ft_z_mean_50 std_msgs/Float64 'm.wrench.force.z' --import math" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+  <node pkg="wrs_run" name="ft_difference" type="ft_difference"/>
+  
+</launch>

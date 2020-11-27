@@ -1,0 +1,4 @@
+<launch>
+  <param name="test_module" value="$(find ros_pytest)/src"/>
+  <test test-name="test_lib" pkg="ros_pytest" type="ros_pytest_runner" />
+</launch>

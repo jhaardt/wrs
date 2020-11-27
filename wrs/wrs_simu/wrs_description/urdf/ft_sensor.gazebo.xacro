@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <!--https://github.com/carlosjoserg/force-torque-sensor/tree/master/model-->
+  
+  <xacro:macro name="ft_sensor_gazebo" params="joint">
+    
+    <!-- Forces the joint to send feedback  -->
+    <gazebo reference="${joint}">
+      <provideFeedback>true</provideFeedback>
+    </gazebo>
+    
+    <!-- The ft_sensor plugin  -->
+    <gazebo>
+      <plugin name="${joint}_ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+	<updateRate>1000.0</updateRate>
+	<topicName>/wrench</topicName> 
+	<jointName>${joint}</jointName>
+	<noise>
+	  <type>gaussian</type>
+	  <mean>0.0</mean>
+	  <stddev>0.003</stddev> <!-- change this to simulate noise --> 
+	</noise>
+      </plugin>
+    </gazebo>
+    
+  </xacro:macro>
+  
+</robot>
+

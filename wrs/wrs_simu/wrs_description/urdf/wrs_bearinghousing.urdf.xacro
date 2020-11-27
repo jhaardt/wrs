@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<robot name="wrs_bearinghousing" xmlns:xacro="http://wiki.ros.org/xacro">
+  
+  <link name="bearinghousing_link">
+    <inertial>
+      <origin xyz="0 0 -0.0117606" rpy="0 -1.5708 0" />
+      <mass value="0.13793" />
+      <inertia 	ixx ="4.052e-05" ixy = "-8.029e-15" ixz = "3.501e-17" iyx = "-8.029e-15" iyy = "3.004e-05" iyz = "0.00" izx = "3.501e-17" izy = "0.00" izz = "3.004e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 -1.5708 0"/>
+      <geometry>
+	<mesh filename="package://wrs_description/meshes/collision/SBARB6200ZZ-30.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="gray">
+	<color rgba="0.7 0.7 0.7 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 -1.5708 0"/>
+      <geometry>
+	<mesh filename="package://wrs_description/meshes/collision/SBARB6200ZZ-30.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+  
+   <gazebo reference="bearinghousing_link">
+  <visual>  
+  <material>  
+  <ambient>0.65 0.65 0.65 1.0</ambient>  
+  <diffuse>0.7 0.7 0.7 1.0</diffuse>  
+  <specular>0.9 0.9 0.9 1.0</specular>  
+  <emissive>0.0 0.0 0.0 0.0</emissive>  
+  </material>  
+  </visual>  
+  </gazebo>
+  
+  
+</robot>

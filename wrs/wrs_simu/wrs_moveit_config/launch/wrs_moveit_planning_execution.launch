@@ -1,0 +1,23 @@
+<launch>
+  <arg name="sim" default="false" />
+  <arg name="limited" default="false"/>
+  <arg name="debug" default="false" />
+    
+  <!-- Remap follow_joint_trajectory -->
+  <remap if="$(arg sim)" from="/follow_joint_trajectory" to="/arm_controller/follow_joint_trajectory"/>
+  <remap unless="$(arg sim)" from="/follow_joint_trajectory" to="/pos_based_pos_traj_controller/follow_joint_trajectory"/>
+    
+  <!-- Launch moveit -->
+  <include file="$(find wrs_moveit_config)/launch/move_group.launch">
+    <arg name="limited" default="$(arg limited)"/>
+    <arg name="debug" default="$(arg debug)" />
+    <arg name="sim" value="$(arg sim)" />
+  </include>
+  
+    <!-- Jog_Arm Server --> 
+  <node name="jog_server" pkg="moveit_jog_arm" type="jog_server" output="screen" >
+    <param name="parameter_ns" type="string" value="jog_server" />
+    <rosparam if="$(arg sim)" command="load" file="$(find wrs_moveit_config)/config/jogarm_simulated_config.yaml" />
+    <rosparam unless="$(arg sim)" command="load" file="$(find wrs_moveit_config)/config/jogarm_real_config.yaml" />
+  </node>
+</launch>

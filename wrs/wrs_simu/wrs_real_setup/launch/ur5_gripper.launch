@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="limited" value="true" />
+    <!-- By default, we do not start a database (it can be large) -->
+    <arg name="db" default="true" />
+
+	<arg name="gripper_port" default="/dev/ttyUSB0" />
+    <arg name="gripper_name" default="gripper_controller/gripper_cmd" />
+	
+    <!--UR5 bringup-->
+    <include file="$(find wrs_real_setup)/launch/ur5_bringup.launch">
+        <arg name="robot_ip" value="192.168.88.130" />
+        <arg name="limited" value="$(arg limited)" />
+        <arg name="with_gripper" value="true" />
+    </include>
+	
+    <!--gripper bringup-->
+    <node name="gripper_node" pkg="robotiq_2f_gripper_control" type="Robotiq2FGripperRtuNode.py" args="$(arg gripper_port)" >
+        <remap from="Robotiq2FGripperRobotInput" to="$(arg gripper_name)/input" />
+        <remap from="Robotiq2FGripperRobotOutput" to="$(arg gripper_name)/output" />
+    </node>
+    
+	<include file="$(find icl_robotiq_2f_gripper_action_server)/launch/robotiq_2f_gripper_action_server.launch">
+        <arg name="gripper_name" default="$(arg gripper_name)" />
+    </include>
+	
+    <node name="joint_state_republisher" pkg="wrs_real_setup" type="gripper_joint_state_publisher.py">
+		<param name = "gripper_ns" value = "gripper_controller"/>
+	</node>
+	
+  <!-- Converts ft_sensor_topic  -->
+  <!-- Since its nesssary that the ft_sensor service is started before the note we wait 3sec https://answers.ros.org/question/233353/set-delay-between-starting-nodes-within-launch-file/-->
+  <arg name="node_start_delay" default="3.0" />   
+  <node name="ft_sensor_topic_converted" pkg="topic_tools" type="transform" args="/wrench /wrench_converted std_msgs/Float64 'math.hypot(math.hypot(m.wrench.force.x,m.wrench.force.y),m.wrench.force.z)' --import math" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+  <node pkg="wrs_run" name="ft_mean_filter" type="ft_mean_filter"/>
+   <node pkg="wrs_run" name="ft_world_transform" type="ft_world_transform_real"/>
+   
+  <!-- For Setup -->
+  <node name="ft_sensor_topic_ft_z" pkg="topic_tools" type="transform" args="/wrench_world /wrench_ft_z std_msgs/Float64 'm.wrench.force.z' --import math" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+  <node name="ft_sensor_topic_ft_z_mean_5" pkg="topic_tools" type="transform" args="/wrench_mean_5 /wrench_ft_z_mean_5 std_msgs/Float64 'm.wrench.force.z' --import math" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+  <node name="ft_sensor_topic_ft_z_mean_50" pkg="topic_tools" type="transform" args="/wrench_mean_50 /wrench_ft_z_mean_50 std_msgs/Float64 'm.wrench.force.z' --import math" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " />
+  <node pkg="wrs_run" name="ft_difference" type="ft_difference"/>
+</launch>

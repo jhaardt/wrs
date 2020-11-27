@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- to control/activate the gripper on the local machine -->
+<!-- first do a 'reset' then 'activate' to activate the gripper-->
+<launch>
+
+   <arg name="gripper_name" default="gripper_controller/gripper_cmd" />
+
+  <node name="CModelSimpleController" pkg="robotiq_2f_gripper_control" type="Robotiq2FGripperSimpleController.py" output="screen">
+        <remap from="Robotiq2FGripperRobotOutput" to="$(arg gripper_name)/output" />
+  </node>
+
+</launch>

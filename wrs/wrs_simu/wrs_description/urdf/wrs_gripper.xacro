@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot  xmlns:xacro="http://wiki.ros.org/xacro">
+  
+  <!-- include macros for the 2f gripper-->
+  <xacro:include filename="$(find robotiq_2f_140_gripper_visualization)/urdf/robotiq_arg2f_140_model_macro.xacro" />
+  
+  <!-- creates the robotiq gripper + addes specifics-->
+  <xacro:macro name="gripper" params="prefix"> 
+    <xacro:robotiq_arg2f_140 prefix="${prefix}" pad="0" />
+    <xacro:gripper_addon prefix="${prefix}" />  
+  </xacro:macro>
+  
+  <xacro:macro name="gripper_addon" params="prefix">
+    <xacro:gripper_addon_finger prefix="${prefix}" fingerprefix="left" />
+    <xacro:gripper_addon_finger prefix="${prefix}" fingerprefix="right" /> 
+    
+    <!--Collours the gripper_base_link -->
+    <gazebo reference="${prefix}robotiq_arg2f_base_link">
+      <material>Gazebo/DarkGrey</material> 
+    </gazebo>
+    <!--mimics the joints for the right_outer_knuckle (left one is to mimic) -->
+    <gazebo>   
+      <plugin name="${prefix}right_outer_knuckle_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+	<joint>${prefix}finger_joint</joint>
+	<mimicJoint>${prefix}right_outer_knuckle_joint</mimicJoint>
+	<multiplier>-1.0</multiplier>
+      </plugin>
+    </gazebo>  
+    
+  </xacro:macro>
+  
+  <xacro:macro name="gripper_addon_finger" params="prefix fingerprefix">
+    
+    <link name="${prefix}${fingerprefix}finger_pad">
+      <inertial>
+	<origin xyz="0 0.03859 -0.02253" rpy="0 0 0" />
+	<mass value="0.003244" />
+	<inertia  ixx="0.00000075" ixy="0.00000154"  ixz="0.00000087" iyx="0.00000154"  iyy="0.00000087"  iyz="0.00000075" izx="0.00000087" izy="0.00000075" izz="0.00000154" />
+      </inertial>
+      <visual>
+	<origin xyz=" 0 0 0" rpy="0 0 0"/>
+	<geometry>
+	  <mesh filename="package://wrs_description/meshes/collision/pad_cut.stl" scale="0.001 0.001 0.001"/>
+	</geometry>
+	<material name="black">
+	  <color rgba="0.1 0.1 0.1 1"/>
+	</material>
+      </visual>
+      <collision>
+	<origin xyz="0 0 0" rpy="0 0 0"/>
+	<geometry>
+	  <mesh filename="package://wrs_description/meshes/collision/pad_cut.stl" scale="0.001 0.001 0.001"/>
+	</geometry>
+      </collision>
+    </link>
+    
+    <joint name="${prefix}${fingerprefix}_finger_pad_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${prefix}${fingerprefix}_inner_finger" />
+      <child link="${prefix}${fingerprefix}finger_pad" />
+      <axis xyz="0 0 1" />
+    </joint>
+    
+    <!--Collours the links in Gazebo-->
+    <gazebo reference="${prefix}${fingerprefix}finger_pad">
+      <material>Gazebo/DarkGrey</material> 
+    </gazebo>
+    <gazebo reference="${prefix}${fingerprefix}_inner_finger">
+      <material>Gazebo/DarkGrey</material> 
+    </gazebo>
+    <gazebo reference="${prefix}${fingerprefix}_inner_knuckle">
+      <material>Gazebo/DarkGrey</material> 
+    </gazebo>
+    <gazebo reference="${prefix}${fingerprefix}_outer_finger">
+      <material>Gazebo/DarkGrey</material> 
+    </gazebo>
+    <gazebo reference="${prefix}${fingerprefix}_outer_knuckle">
+      <material>Gazebo/Grey</material> 
+    </gazebo>
+    
+    <!--mimics the joints for the the individual fingers-->
+    <gazebo> 
+      <plugin name="${prefix}${fingerprefix}_inner_finger_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+	<joint>${prefix}finger_joint</joint>
+	<mimicJoint>${prefix}${fingerprefix}_inner_finger_joint</mimicJoint>
+	<multiplier>1.0</multiplier>
+      </plugin>
+      <plugin name="${prefix}${fingerprefix}_inner_knuckle_joint_plugin" filename="libroboticsgroup_gazebo_mimic_joint_plugin.so">
+	<joint>${prefix}finger_joint</joint>
+	<mimicJoint>${prefix}${fingerprefix}_inner_knuckle_joint</mimicJoint>
+	<multiplier>-1.0</multiplier>
+      </plugin>
+    </gazebo>    
+  </xacro:macro>  
+</robot>
+
+

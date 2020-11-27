@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robotiq_ethercat</name>
+  <version>1.0.0</version>
+  <description>
+    <p>
+      ROS-Industrial support stack for facilitating communication with EtherCAT networks.
+    </p>
+  </description>
+
+  <author>Jonathan Meyer</author>
+  <maintainer email="ros@robotiq.com">Jean-Philippe Roberge</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>soem</depend>
+  <depend>roscpp</depend>
+
+</package>

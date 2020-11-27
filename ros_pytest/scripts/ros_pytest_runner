@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+# coding=utf-8
+import sys
+from ros_pytest import run_pytest
+
+
+if __name__ == '__main__':
+    sys.exit(run_pytest(sys.argv))

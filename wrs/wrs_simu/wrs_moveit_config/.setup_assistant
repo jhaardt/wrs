@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: wrs_description
+    relative_path: urdf/wrs_robot.xacro
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/ur5_robotiq.srdf
+  CONFIG:
+    author_name: Julian Haardt
+    author_email: julian.haardt@gmail.com
+    generated_timestamp: 1572971034

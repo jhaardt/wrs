@@ -1,0 +1,14 @@
+<launch>
+   <arg name="sim" default = "false"/>
+  <group unless = "$(arg sim)"> 
+  <rosparam file="$(find wrs_moveit_config)/config/controllers_real.yaml"/>
+  </group>
+  <group if = "$(arg sim)"> 
+  <rosparam file="$(find wrs_moveit_config)/config/controllers_simu.yaml"/>
+  </group>
+  
+  <param name="use_controller_manager" value="false"/>
+  <param name="trajectory_execution/execution_duration_monitoring" value="false"/>
+  <param name="moveit_controller_manager" value="moveit_simple_controller_manager/MoveItSimpleControllerManager"/>
+
+</launch>

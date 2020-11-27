@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<robot name="wrs_pin" xmlns:xacro="http://wiki.ros.org/xacro">
+  
+  <link name="pin_link">
+    <inertial>
+      <origin xyz="0 0 -0.013083" rpy="0 1.5708 0" />
+      <mass value="0.007652" />
+      <inertia ixx = "39.917e-09" ixy = "-2.567e-18" ixz = "0.00" iyx = "-2.567e-18" iyy = "723.648e-09" iyz = "0.00" izx = "0.00" izy = "0.00" izz = "723.648e-09" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+	<mesh filename="package://wrs_description/meshes/collision/BGPSL6-9-L30-F8.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="gray">
+	<color rgba="0.7 0.7 0.7 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+	<mesh filename="package://wrs_description/meshes/collision/BGPSL6-9-L30-F8.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <gazebo reference="pin_link">
+    <visual>  
+      <material>  
+	<ambient>0.65 0.65 0.65 1.0</ambient>  
+	<diffuse>0.7 0.7 0.7 1.0</diffuse>  
+	<specular>0.9 0.9 0.9 1.0</specular>  
+	<emissive>0.0 0.0 0.0 0.0</emissive>  
+      </material>  
+    </visual>  
+  </gazebo>
+  
+  
+</robot>

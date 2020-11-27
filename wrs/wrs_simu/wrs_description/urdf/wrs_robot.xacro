@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<robot name="ur5_robotiq" xmlns:xacro="http://wiki.ros.org/xacro">
+  
+  <xacro:include filename="$(find wrs_description)/urdf/wrs_gripper.xacro" />
+  
+  <!-- create the robot + eef combo itself as a macro -->
+  <xacro:macro name="robot_ur5_with_gripper" params="prefix">
+    <!-- instantiate UR5 and 2f gripper -->    
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+
+  <!-- common stuff -->
+  <xacro:include filename="$(find ur_description)/urdf/common.gazebo.xacro" />
+
+  <!-- ur5 -->
+  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+
+  <!-- arm -->
+  <xacro:ur5_robot prefix="" joint_limited="true"
+    shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
+    shoulder_lift_lower_limit="${-pi}" shoulder_lift_upper_limit="${pi}"
+    elbow_joint_lower_limit="${-pi}" elbow_joint_upper_limit="${pi}"
+    wrist_1_lower_limit="${-pi}" wrist_1_upper_limit="${pi}"
+    wrist_2_lower_limit="${-pi}" wrist_2_upper_limit="${pi}"
+    wrist_3_lower_limit="${-pi}" wrist_3_upper_limit="${pi}"
+    transmission_hw_interface="$(arg transmission_hw_interface)"
+/>
+
+  <link name="world" />
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "base_link" />
+    <origin xyz="0.0 0.0 0.049" rpy="0.0 0.0 -1.57" />
+  </joint>
+    
+    
+    <!-- create the robot + eef combo itself as a macro -->
+    <xacro:gripper prefix="gripper_"/>
+    
+    <!-- Since the universal_robot dosen't specify a  inertial for tool0, we need to place an empty fixed link with a negligible mass to tool0, that we can place our force sensor into the revolute joint.(Since the Robot uses a quick copuler for the tool, it is used for this purpos)-->
+    <link name="${prefix}tool0_inertial">
+      <visual>
+	<origin xyz="0 0 0.02225" />
+	<geometry>
+	  <cylinder length="0.0445" radius="0.036"/>
+	</geometry>
+	<material name="black">
+	  <color rgba="0 0 0 1"/>
+	</material>
+      </visual>
+      <collision>
+	<origin xyz="0 0 0.02225" />
+	<geometry>
+	  <cylinder length="0.0445" radius="0.036"/>
+	</geometry>
+      </collision>
+      <inertial>
+	<origin xyz="0 0 0.2225" />
+	<mass value="0.02" />
+	<inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0" />
+      </inertial>
+    </link>
+    <gazebo reference="${prefix}tool0_inertial">
+      <material>Gazebo/DarkGrey</material> 
+    </gazebo>
+    
+    <joint name="${prefix}tool0_inertial_joint" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+      <parent link="${prefix}tool0" />
+      <child link="${prefix}tool0_inertial" />
+    </joint>
+    
+    <!-- attach gripper -->
+    <joint name="${prefix}tool0_${prefix}gripper_robotiq_arg2f_base_joint" type="revolute">
+      <origin xyz="0.0 0.0 0.04" rpy="0 0 -1.57" />
+      <precise_collision link="false"/>
+      <parent link="${prefix}tool0_inertial" />
+      <child link="${prefix}gripper_robotiq_arg2f_base_link" />
+      <limit velocity="6.5" effort="1000" lower="0" upper="0" />
+    </joint>
+    
+    <transmission name="${prefix}tool0_${prefix}gripper_robotiq_arg2f_base_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}tool0_${prefix}gripper_robotiq_arg2f_base_joint">
+	<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}tool0_${prefix}gripper_robotiq_arg2f_base_motor">
+	<mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+    
+    <!--Breaks the Joint, https://bitbucket.org/osrf/sdformat/pull-requests/133/added-urdf-gazebo-extension-option-to/diff-->
+    <!--    <gazebo reference="${prefix}tool0-${prefix}gripper_robotiq_arg2f_base_joint">
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+    </gazebo>-->
+    
+    <!-- include ft_sensor-->
+    <xacro:include filename="$(find wrs_description)/urdf/ft_sensor.gazebo.xacro" />
+    <!-- place ft_sensor-->
+    <xacro:ft_sensor_gazebo joint="${prefix}tool0_${prefix}gripper_robotiq_arg2f_base_joint" />
+    
+  </xacro:macro>
+  
+  <xacro:robot_ur5_with_gripper prefix=""/>
+  
+  
+</robot>
+
