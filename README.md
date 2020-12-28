@@ -23,7 +23,7 @@ For further Informations you can run this two anylisy tools.
 
 `$ roslaunch wrs_moveit_config moveit_rviz.launch config:=true`
 
-`$ rqt>`
+`$ rqt`
 
 
 ## Real
@@ -50,7 +50,7 @@ If the real robot is connected:
 
 [gazebo_ros_link_attacher[GitHub]](https://github.com/pal-robotics/gazebo_ros_link_attacher)
 
-[moveit_jog_arm[GitHub]](https://github.com/inmo-jang/moveit_jog_arm) (clone) Orignal Git dosen't exist anymore since it changed, while crealing this Project, to MoveIt Expremental and is now known as MoveIt Servo
+[moveit_jog_arm[GitHub]](https://github.com/inmo-jang/moveit_jog_arm) (clone) Orignal Git dosen't exist anymore since it got changed, while creating this Project, to MoveIt Expremental and is now known as MoveIt Servo
 
 [roboticsgroup_gazebo_plugins[GitHub]](https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins)
 
