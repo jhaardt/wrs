@@ -1,25 +1,25 @@
 # wrs
 ## Introduction
-This Workspace is the result of my Master Theses. The goal of the Project was to create a Force Controlled assembly process, that works in an simulated and a real environment.
-As Robot an Universal Robots UR5 with a attached Robotiq 2F-140 Gripper and ROS Kinetic got used. The task was to fit a pin and a Bearing housing into a mounting plate and originated from the assembly task of the 2018 World Robot Challenge.
+This Workspace is the result of my Master Theses. The goal of the Project was to create a Force Controlled assembly process, that works in a simulated and a real environment.
+As Robot, an Universal Robots UR5 with an attached Robotiq 2F-140 Gripper and ROS Kinetic Kame got used. The task was to fit a pin and a Bearing housing into a mounting plate and originated from the assembly task of the 2018 World Robot Challenge.
 
-This Video shows the gazebo simulated UR5-Robot, searching the mounting hole and fitting the Pin into the the mounting plate, by only using the integrated force sensor in the TCP.
+This Video shows the gazebo simulated UR5-Robot, searching the mounting hole and fitting the Pin into the mounting plate, by only using the integrated force sensor in the TCP.
 
 [![youtube](https://share.gifyoutube.com/wVXjZX.gif)](https://youtu.be/F9nsdSvd_QM)
 
-(unfortunately do to COVID-19 it was not possible for me to get into the Lab again and take a Video of the real Robot).
+(Unfortunately do to COVID-19 it was not possible for me to get into the Lab again and take a Video of the real Robot).
 
 To make it work some ROS-Packages other than my own needed some changes. For that reason I decided to upload the whole Workspace to GitHub.
 
 ## Getting set up
-This Workspace was developed under ROS Kinetic, other versions of ROS aren't tested, but might work.
+This Workspace was developed with ROS Kinetic Kame, other versions of ROS aren't tested, but might work.
 
 To Clone the git. Go into your new ROS Catkin_Workspace and run.
 
 `$ git clone https://github.com/jhaardt/wrs.git src`
 
 ## Running the code
-To run the different Programms follow this order and run them in different Terminal Windows:
+To run the different programms follow this order and run them in different Terminal Windows:
 
 ### Simulation
 
@@ -30,7 +30,7 @@ To run the different Programms follow this order and run them in different Termi
 `$ rosrun wrs_run pick_place_simu`
 
 
-For further Information, into the process you can run this two analysis tools.
+For further Information, into the process, you can run this two analysis tools.
 
 `$ roslaunch wrs_moveit_config moveit_rviz.launch config:=true`
 
