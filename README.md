@@ -71,7 +71,7 @@ If the real robot is connected:
 
 [robotiq [GitHub]](https://github.com/ros-industrial/robotiq)
 
-[kinetic-devel [GitHub]](https://github.com/machinekoder/ros_pytest/tree/kinetic-devel) (necessary for Jag Arm)
+[kinetic-devel [GitHub]](https://github.com/machinekoder/ros_pytest/tree/kinetic-devel) (necessary for Jog Arm)
 
 [universal_robot [GitHub]](https://github.com/ros-industrial/universal_robot)
 
